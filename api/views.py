@@ -1,6 +1,7 @@
 import os
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
+from django.http import HttpResponse
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from django.core.files.storage import default_storage
 from drf_yasg.utils import swagger_auto_schema
@@ -12,9 +13,9 @@ from .responses import CSV_FILE_RESPONSE, VALIDATION_ERROR_RESPONSE
 
 class CSVProcessViewSet(GenericViewSet):
     """
-    Обработка файлов
+    Обработка файлов для прогнозирования
 
-    Обработка файлов
+    Обработка файлов на основе данных машинного обучения
     """
     parser_classes = (MultiPartParser, FormParser, FileUploadParser)
     serializer_class = CSVFilesSerializer
@@ -31,13 +32,14 @@ class CSVProcessViewSet(GenericViewSet):
         transactions = serializer.validated_data['transactions']
 
         path_clients = os.path.join('uploads/', clients.name)
-        full_path_clients = default_storage.save(path_clients, clients)
+        full_path_clients = f'media/{default_storage.save(path_clients, clients)}'
         path_transactions = os.path.join('uploads/', transactions.name)
-        full_path_transactions = default_storage.save(path_transactions, transactions)
+        full_path_transactions = f'media/{default_storage.save(path_transactions, transactions)}'
 
-        result_csv = make_predictions(full_path_clients, full_path_transactions, 'result.csv')
-
-        response = Response(result_csv, content_type='text/csv')
+        make_predictions(full_path_clients, full_path_transactions, 'result.csv')
+        with open('result.csv', 'r') as f:
+            csv_content = f.read()
+        response = HttpResponse(csv_content, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="result.csv"'
 
         return response

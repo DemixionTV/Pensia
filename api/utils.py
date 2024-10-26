@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+import io
 
 # Параметры
 sequence_length = 10
@@ -93,12 +94,4 @@ def make_predictions(input_client_file, input_trans_file, output_file):
             ],
         }
     )
-    output_df.to_csv(output_file, index=False)
-    print(f'Predictions saved to {output_file}')
-
-
-# make_predictions(
-#     f'test_data/test_client.csv',
-#     f'test_data/test_transactions.csv',
-#     output_file,
-# )
+    output_df.to_csv(output_file, index=False,sep=';')
