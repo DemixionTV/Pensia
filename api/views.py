@@ -37,7 +37,7 @@ class CSVProcessViewSet(GenericViewSet):
         full_path_transactions = f'media/{default_storage.save(path_transactions, transactions)}'
 
         make_predictions(full_path_clients, full_path_transactions, 'result.csv')
-        with open('result.csv', 'r') as f:
+        with open('result.csv', 'r',encoding='utf-8') as f:
             csv_content = f.read()
         response = HttpResponse(csv_content, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="result.csv"'

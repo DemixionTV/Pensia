@@ -89,9 +89,9 @@ def make_predictions(input_client_file, input_trans_file, output_file):
     output_df = pd.DataFrame(
         {
             'accnt_id': client_data['accnt_id'],
-            'prediction': [
+            'erly_pnsn_flg': [
                 1 if pred > 0.5 else 0 for pred in predictions.flatten()
             ],
         }
     )
-    output_df.to_csv(output_file, index=False,sep=';')
+    output_df.to_csv(output_file, index=False,sep=',', encoding='utf-8')
